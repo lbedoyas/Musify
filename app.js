@@ -6,7 +6,7 @@ var bodyParser = require('body-parser');
 var app = express();
 
 //cargar rutas
-
+var user_routes = require('./routes/user');
 
 
 
@@ -18,5 +18,8 @@ app.use(bodyParser.json());
 
 
 //Rutas Base
+app.use('/api', user_routes);
+
+
 
 module.exports = app;
