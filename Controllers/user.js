@@ -3,6 +3,7 @@
 var User = require('../models/user');
 // Se carga modulo de bcrypt para guardar la contraseña desde ya incriptada
 var bcrypt = require('bcrypt-nodejs');
+var jwt = require('../services/jwt');
 
 function pruebas(req, res){
     res.status(200).send({
@@ -59,8 +60,58 @@ function saveUser(req, res)
     }
 }
 
+
+
+//con esta funcion se comprueba si los datos que estan en la base de datos 
+//coinciden
+function loginUser(req, res)
+{
+    //los objetos que llegan siempre son tipo JSON gracias a la libreria BodyParse
+    var params = req.body;
+
+    var email = params.email;
+    var password = params.password;
+
+    User.findOne({email: email.toLowerCase()}, (err, user) => {
+            if(err)
+            {
+                res.status(500).send({message: 'Error en la peticion'});
+            }else{
+                if(!user)
+                {
+                    res.status(404).send({message: 'El usuario no existe'});
+                }else{
+                    //comprobar contraseña
+                    bcrypt.compare(password, user.password, function(err, check){
+                            if(check)
+                            {
+                                //devolver los datos del usuario logeado
+                                if(params.gethash)
+                                {
+                                    //Devolver un token de jwt
+                                    res.status(200).send({
+                                        token: jwt.createToken(user)
+                                    });
+                                }
+                                else
+                                {
+                                    res.status(200).send({user});
+                                }
+                            }else
+                            {
+                                res.status(404).send({message: 'El usuario no ha podido logearse'});
+                            }
+                    });
+                }
+
+            }
+    });
+}
+
+
 module.exports = {
     pruebas,
-    saveUser
+    saveUser,
+    loginUser
 
 };
