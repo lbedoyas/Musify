@@ -1,5 +1,7 @@
 'use strict'
 
+var fs =  require('fs');
+var path = require('path');
 var User = require('../models/user');
 // Se carga modulo de bcrypt para guardar la contraseña desde ya incriptada
 var bcrypt = require('bcrypt-nodejs');
@@ -166,12 +168,28 @@ function uploadImage(req, res){
     }
 }
 
+function getImageFile(req, res)
+{
+    var imageFile = req.params.imageFile;
+    var path_file = '../uploads/users'+imageFile;
+    fs.exists(path_file, function(exists){
+                if(exists)
+                {
+                    res.sendFile(path.resolve(path_file));
+                }else
+                {
+                    res.status(200).send({message: 'LA IMAGEN NO EXISTE '});
+                }
+    });
+}
+
 
 module.exports = {
     pruebas,
     saveUser,
     loginUser,
     updateUser,
-    uploadImage
+    uploadImage,
+    getImageFile
 
 };
