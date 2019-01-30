@@ -1,5 +1,8 @@
 'use strict'
 
+// Esta funciones se ejecutan antes de que abra un URL o Router
+
+
 var jwt = require('jwt-simple');
 
 //sirve para crear un token de comprobacion de creacion y expedicion de contraseña
