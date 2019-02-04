@@ -8,8 +8,22 @@ var Album = require('../Models/album');
 var Song = require('../Models/song');
 
 function getAlbum(req, res){
+    var albumId = req.params.id;
 
-   res.status(200).send({message: 'Accion getAlbum'});
+    Album.findById(albumId).populate({path: 'artist'}).exec((err, album)=> {
+        if(err)
+        {
+            res.status(500).send({message: 'Error en la peticion'});
+        }else
+        {
+            if(!album){
+                res.status(404).send({message: 'El album no existe'});
+            }else
+            {
+                res.status(200).send({album});
+            }
+        }
+    });
 
 }
 
@@ -18,10 +32,11 @@ function saveAlbum(req, res){
 
     var params = req.body;
     album.title = params.title;
-    album.descripcion = params.description;
+    album.description = params.description;
     album.year = params.year;
     album.image = 'null';
     album.artist = params.artist;
+
 
 
     album.save((err, albumStored) => {
@@ -40,6 +55,8 @@ function saveAlbum(req, res){
         }
     });
 }
+
+
 
 module.exports = {
     getAlbum,
