@@ -106,9 +106,50 @@ function updateAlbum(req, res){
 }
 
 
+function deleteAlbum(req,res){
+    var albumId = req.params.id;
+
+    Album.find({artist: albumId}).remove((err, albumRemoved) => {
+        if(err){
+            res.status(500).send({message: 'Error al eliminar el artista'});
+        }
+        else
+        {
+            if(!albumRemoved)
+            {
+                res.status(404).send({message: 'El Album no a sido eliminado'});
+            }
+            else{
+
+
+                    Song.find({album: albumRemoved._id}).remove((err, songRemoved) => {
+                        if(err){
+                            res.status(500).send({message: 'Error al eliminar la cancion'});
+                        }
+                        else
+                        {
+                            if(!songRemoved)
+                            {
+                                res.status(404).send({message: 'la cancion no a sido eliminada'});
+                            }
+                            else{
+                            
+                                res.status(200).send({album: albumRemoved});
+                            }
+                        }
+                    });
+            
+
+            }
+        }
+    });
+}
+
+
 module.exports = {
     getAlbum,
     saveAlbum,
     getAlbums,
-    updateAlbum
+    updateAlbum,
+    deleteAlbum
 };
