@@ -109,7 +109,7 @@ function updateAlbum(req, res){
 function deleteAlbum(req,res){
     var albumId = req.params.id;
 
-    Album.find({artist: albumId}).remove((err, albumRemoved) => {
+    Album.findByIdAndRemove(albumId,(err, albumRemoved) => {
         if(err){
             res.status(500).send({message: 'Error al eliminar el artista'});
         }
