@@ -9,6 +9,23 @@ var Song = require('../Models/song');
 
 
 function getSong(req, res){
+    var songId = req.params.id;
+
+    Song.findById(songId).populate({path: 'album'}).exec((err, song)=>{
+        if(err){
+            res.status(500).send({message: 'Error en la peticion'});
+        }else
+        {
+            if(!song){
+                res.status(404).send({message: 'La cancion no existe'});
+            }
+            else
+            {
+                res.status(200).send({song})
+            }
+        }
+    })
+
     res.status(200).send({message: 'controlador cancion'});
 }
 
@@ -36,6 +53,10 @@ function saveSong(req, res){
         }
     });
 }
+
+
+
+
 
 
 module.exports = {
